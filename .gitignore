@@ -28,3 +28,9 @@ obj/
 
 # Copilot indices (if generated)
 **/CopilotIndices/
+# VS and build artifacts
+.vs/
+**/bin/
+**/obj/
+*.cache
+*.editorconfig
