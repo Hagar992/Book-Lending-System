@@ -1,0 +1,172 @@
+<div class="register-container d-flex flex-column align-items-center justify-content-center min-vh-100 bg-light px-3">
+  <!-- Main Card -->
+  <div class="card shadow-lg border-0 rounded-4 overflow-hidden" style="max-width: 460px; width: 100%;">
+    
+    <!-- Header -->
+    <div class="card-header bg-gradient text-dark text-center py-4">
+      <h2 class="mb-0 fw-bold">
+        <i class="bi bi-person-plus me-2"></i>Create Account
+      </h2>
+      <p class="mb-0 opacity-75">Join the Book Lending System</p>
+    </div>
+
+    <!-- Form Body -->
+    <div class="card-body p-4">
+      <form (ngSubmit)="onRegister()" #registerForm="ngForm">
+        
+        <!-- Full Name -->
+        <div class="form-group mb-3">
+          <label for="name" class="form-label text-secondary">
+            <i class="bi bi-person me-1"></i> Full Name
+          </label>
+          <input 
+            type="text" 
+            id="name" 
+            [(ngModel)]="name" 
+            name="name" 
+            class="form-control form-control-lg rounded-pill shadow-sm px-4"
+            placeholder="Enter your full name"
+            required 
+            #nameInput="ngModel"
+          />
+          <div *ngIf="nameInput.invalid && nameInput.touched" class="text-danger mt-1 small">
+            <i class="bi bi-exclamation-triangle me-1"></i>Name is required.
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div class="form-group mb-3">
+          <label for="email" class="form-label text-secondary">
+            <i class="bi bi-envelope me-1"></i> Email
+          </label>
+          <input 
+            type="email" 
+            id="email" 
+            [(ngModel)]="email" 
+            name="email" 
+            class="form-control form-control-lg rounded-pill shadow-sm px-4"
+            placeholder="Enter your email"
+            required 
+            email
+            #emailInput="ngModel"
+          />
+          <div *ngIf="emailInput.errors?.['required'] && emailInput.touched" class="text-danger mt-1 small">
+            <i class="bi bi-exclamation-triangle me-1"></i>Email is required.
+          </div>
+          <div *ngIf="emailInput.errors?.['email'] && emailInput.touched" class="text-danger mt-1 small">
+            <i class="bi bi-exclamation-triangle me-1"></i>Please enter a valid email.
+          </div>
+        </div>
+
+        <!-- Password -->
+        <div class="form-group mb-3">
+          <label for="password" class="form-label text-secondary">
+            <i class="bi bi-lock me-1"></i> Password
+          </label>
+          <input 
+            type="password" 
+            id="password" 
+            [(ngModel)]="password" 
+            name="password" 
+            class="form-control form-control-lg rounded-pill shadow-sm px-4"
+            placeholder="Create a strong password"
+            required 
+            minlength="6"
+            #passwordInput="ngModel"
+          />
+          <div *ngIf="passwordInput.errors?.['required'] && passwordInput.touched" class="text-danger mt-1 small">
+            <i class="bi bi-exclamation-triangle me-1"></i>Password is required.
+          </div>
+          <div *ngIf="passwordInput.errors?.['minlength'] && passwordInput.touched" class="text-danger mt-1 small">
+            <i class="bi bi-exclamation-triangle me-1"></i>Password must be at least 6 characters.
+          </div>
+        </div>
+
+        <!-- Confirm Password -->
+        <div class="form-group mb-3">
+          <label for="confirmPassword" class="form-label text-secondary">
+            <i class="bi bi-lock-fill me-1"></i> Confirm Password
+          </label>
+          <input 
+            type="password" 
+            id="confirmPassword" 
+            [(ngModel)]="confirmPassword" 
+            name="confirmPassword" 
+            class="form-control form-control-lg rounded-pill shadow-sm px-4"
+            placeholder="Confirm your password"
+            required
+            #confirmPasswordInput="ngModel"
+          />
+          <div *ngIf="passwordMismatch && confirmPasswordInput.touched" class="text-danger mt-1 small">
+            <i class="bi bi-exclamation-triangle me-1"></i>Passwords do not match.
+          </div>
+        </div>
+
+        <!-- Role -->
+        <div class="form-group mb-4">
+          <label for="role" class="form-label text-secondary">
+            <i class="bi bi-people me-1"></i> Role
+          </label>
+          <select 
+            id="role" 
+            [(ngModel)]="role" 
+            name="role" 
+            class="form-select form-select-lg rounded-pill shadow-sm"
+          >
+            <option value="Member">📚 Member (Borrow Books)</option>
+            <option value="Admin">🛠️ Admin (Manage Books)</option>
+          </select>
+        </div>
+
+        <!-- Submit Button -->
+        <button 
+          type="submit" 
+          [disabled]="loading" 
+          class="btn btn-primary w-100 btn-lg rounded-pill d-flex align-items-center justify-content-center gap-2 py-3 shadow-sm hover-scale"
+        >
+          <span *ngIf="loading" class="spinner-border spinner-border-sm" role="status"></span>
+          <i *ngIf="!loading" class="bi bi-check2-circle"></i>
+          <span>{{ loading ? 'Creating Account...' : 'Create Account' }}</span>
+        </button>
+
+        <!-- Divider -->
+        <div class="text-center my-4 text-muted">
+          <small>or continue with</small>
+        </div>
+
+        <!-- Google Sign-Up Button -->
+        <button 
+          type="button" 
+          (click)="onGoogleRegister()" 
+          class="btn btn-outline-dark w-100 btn-lg rounded-pill d-flex align-items-center justify-content-center gap-2 py-3 hover-scale"
+        >
+          <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" width="20" height="20">
+          <span>Sign up with Google</span>
+        </button>
+
+        <!-- Success Message -->
+        <div *ngIf="successMessage" class="alert alert-success mt-3 py-2 text-center rounded-3 small">
+          <i class="bi bi-check-circle me-1"></i>{{ successMessage }}
+        </div>
+
+        <!-- Error Message -->
+        <div *ngIf="errorMessage" class="alert alert-danger mt-3 py-2 text-center rounded-3 small">
+          <i class="bi bi-exclamation-triangle me-1"></i>{{ errorMessage }}
+        </div>
+
+        <!-- Link to Login -->
+        <div class="text-center mt-3">
+          <small class="text-muted">
+            Already have an account? 
+            <a href="#" (click)="goToLogin()" class="text-primary text-decoration-none fw-medium">Log In</a>
+          </small>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <p class="mt-4 text-muted small text-center">
+    &copy; 2025 Book Lending System. All rights reserved.
+  </p>
+</div>

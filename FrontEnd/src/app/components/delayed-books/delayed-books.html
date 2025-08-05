@@ -1,0 +1,17 @@
+<div class="delayed-books-container">
+  <h2 class="page-title">⚠️ Late Books</h2>
+  <p class="warning-text"> Please Return The Late Books Immediately To Avoid Fines! </p>
+
+  <div class="books-list" *ngIf="delayedBooks.length > 0">
+    <div class="book-item" *ngFor="let book of delayedBooks">
+      <h3>{{ book.title }}</h3>
+      <p> Author: {{ book.author }}</p>
+      <p> borrowedDate: {{ book.borrowedDate }}</p>
+      <p class="due-date"> Due Date: {{ book.dueDate }} <span class="overdue">Late</span></p>
+    </div>
+  </div>
+
+  <div class="no-books" *ngIf="delayedBooks.length === 0">
+    <p> There Are No Books Currently Late. 😊</p>
+  </div>
+</div>

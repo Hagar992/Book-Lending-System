@@ -1,0 +1,19 @@
+<div class="card p-4 mb-4">
+  <h4 class="mb-3">The Borrowed Books</h4>
+  <div *ngIf="loading" class="spinner-border text-primary" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+  <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+  <div *ngIf="!loading && borrowedBooks.length === 0" class="alert alert-info">
+    There Are No Borrowed Books Currently.
+  </div>
+  <div *ngIf="!loading && borrowedBooks.length > 0">
+    <div *ngFor="let book of borrowedBooks" class="mb-3 p-3 border">
+      <p><strong>Title:</strong> {{ book.title }}</p>
+      <p><strong>Author:</strong> {{ book.author }}</p>
+      <p><strong>Borrowed Date:</strong> {{ book.borrowedDate ? (book.borrowedDate | date) : 'Not set' }}</p>
+      <p><strong>Due Date:</strong> {{ book.dueDate ? (book.dueDate | date) : 'Not set' }}</p>
+      <button class="btn btn-danger mt-2" (click)="returnBook(book)">Return</button>
+    </div>
+  </div>
+</div>

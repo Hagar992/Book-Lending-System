@@ -1,0 +1,40 @@
+<h2 class="section-title">Books list</h2>
+
+<!-- قائمة منسدلة لاختيار القسم -->
+<div class="mb-3" *ngIf="!authService.isAdmin()">
+  <label class="form-label">Select Category:</label>
+  <select class="form-control" [(ngModel)]="selectedCategory" (ngModelChange)="filterByCategory()" required>
+    <option value="" disabled selected>Select a category</option>
+    <option *ngFor="let category of categories" [value]="category.name">{{ category.name }}</option>
+  </select>
+</div>
+
+<!-- حقل البحث -->
+<div class="mb-3" *ngIf="!authService.isAdmin()">
+  <input type="text" class="form-control" placeholder="Search by book title..." [(ngModel)]="searchTerm" (ngModelChange)="filterByCategory()" />
+</div>
+
+<!-- عرض الكتب بناءً على القسم والبحث -->
+<div class="book-grid" *ngIf="!authService.isAdmin()">
+  <div
+    *ngFor="let book of filteredBooks"
+    class="book-card"
+    (click)="viewDetails(book)"
+  >
+    <img
+      [src]="book.coverUrl || 'assets/book-placeholder.jpg'"
+      alt="Cover- {{ book.title }}"
+      style="width: 100px; height: 150px; object-fit: cover;"
+    />
+    <div class="book-content">
+      <h3>{{ book.title }}</h3>
+      <p> Author: {{ book.author }}</p>
+      <span [class]="'status ' + (book.available ? 'available' : 'borrowed')">
+        {{ book.available ? 'Available': 'Borrowed' }}
+      </span>
+    </div>
+  </div>
+  <div *ngIf="filteredBooks.length === 0" class="alert alert-info">
+    No books in this category or matching the search.
+  </div>
+</div>

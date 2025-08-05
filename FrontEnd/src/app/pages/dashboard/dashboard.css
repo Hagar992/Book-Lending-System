@@ -1,0 +1,14 @@
+/* تأثير hover على الأزرار */
+.hover-scale:hover {
+  transform: translateY(-2px);
+  transition: transform 0.2s ease;
+}
+
+.hover-shadow:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  transition: box-shadow 0.3s ease;
+}
+
+.bg-gradient {
+  background: linear-gradient(135deg, #0d6efd, #0b5ed7);
+}

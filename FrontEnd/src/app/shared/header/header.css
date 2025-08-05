@@ -1,0 +1,28 @@
+/* تأثير hover على الأزرار */
+.hover-scale:hover {
+  transform: translateY(-2px);
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* تنسيق عام للهيدر */
+.app-header {
+  border-bottom: 1px solid #e9ecef;
+  font-size: 0.92rem;
+}
+
+.app-header .btn {
+  font-weight: 500;
+  padding: 0.4rem 0.8rem;
+  transition: all 0.2s ease;
+}
+
+/* على الموبايل: تقليل الحجم علشان يدخل كل شيء */
+@media (max-width: 576px) {
+  .app-header .btn span {
+    font-size: 0.8rem;
+  }
+  .nav-links {
+    gap: 0.5rem;
+  }
+}
