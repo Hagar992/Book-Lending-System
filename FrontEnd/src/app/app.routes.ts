@@ -4,11 +4,11 @@ import { Register } from './components/auth/register/register';
 import { AuthGuard } from './guards/auth-guard';
 import { BookList } from './components/books/book-list/book-list';
 import { AdminBookManagement } from './components/books/admin-book-management/admin-book-management';
-import { BookDetails} from './components/books/book-details/book-details'; // أضيفي دي
+import { BookDetails} from './components/books/book-details/book-details'; 
 import { Dashboard } from './pages/dashboard/dashboard';
 import { UserBorrowedBooks } from './components/user-borrowed-books/user-borrowed-books';
 import { AdminBorrowedBooks } from './components/admin-borrowed-books/admin-borrowed-books';
-import { DelayedBooks } from './components/delayed-books/delayed-books'; // غيري المسار حسب هيكل المشروع
+import { DelayedBooks } from './components/delayed-books/delayed-books'; 
 
 
 export const routes: Route[] = [

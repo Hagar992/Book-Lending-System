@@ -12,7 +12,7 @@
 
     <!-- Form Body -->
     <div class="card-body p-4">
-      <form (ngSubmit)="onRegister()" #registerForm="ngForm">
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
         
         <!-- Full Name -->
         <div class="form-group mb-3">
@@ -22,14 +22,11 @@
           <input 
             type="text" 
             id="name" 
-            [(ngModel)]="name" 
-            name="name" 
+            formControlName="name"
             class="form-control form-control-lg rounded-pill shadow-sm px-4"
             placeholder="Enter your full name"
-            required 
-            #nameInput="ngModel"
           />
-          <div *ngIf="nameInput.invalid && nameInput.touched" class="text-danger mt-1 small">
+          <div *ngIf="registerForm.get('name')?.invalid && registerForm.get('name')?.touched" class="text-danger mt-1 small">
             <i class="bi bi-exclamation-triangle me-1"></i>Name is required.
           </div>
         </div>
@@ -42,19 +39,12 @@
           <input 
             type="email" 
             id="email" 
-            [(ngModel)]="email" 
-            name="email" 
+            formControlName="email"
             class="form-control form-control-lg rounded-pill shadow-sm px-4"
             placeholder="Enter your email"
-            required 
-            email
-            #emailInput="ngModel"
           />
-          <div *ngIf="emailInput.errors?.['required'] && emailInput.touched" class="text-danger mt-1 small">
-            <i class="bi bi-exclamation-triangle me-1"></i>Email is required.
-          </div>
-          <div *ngIf="emailInput.errors?.['email'] && emailInput.touched" class="text-danger mt-1 small">
-            <i class="bi bi-exclamation-triangle me-1"></i>Please enter a valid email.
+          <div *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched" class="text-danger mt-1 small">
+            <i class="bi bi-exclamation-triangle me-1"></i>Email is required or invalid.
           </div>
         </div>
 
@@ -66,19 +56,12 @@
           <input 
             type="password" 
             id="password" 
-            [(ngModel)]="password" 
-            name="password" 
+            formControlName="password"
             class="form-control form-control-lg rounded-pill shadow-sm px-4"
             placeholder="Create a strong password"
-            required 
-            minlength="6"
-            #passwordInput="ngModel"
           />
-          <div *ngIf="passwordInput.errors?.['required'] && passwordInput.touched" class="text-danger mt-1 small">
-            <i class="bi bi-exclamation-triangle me-1"></i>Password is required.
-          </div>
-          <div *ngIf="passwordInput.errors?.['minlength'] && passwordInput.touched" class="text-danger mt-1 small">
-            <i class="bi bi-exclamation-triangle me-1"></i>Password must be at least 6 characters.
+          <div *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched" class="text-danger mt-1 small">
+            <i class="bi bi-exclamation-triangle me-1"></i>Password is required or too short.
           </div>
         </div>
 
@@ -90,14 +73,11 @@
           <input 
             type="password" 
             id="confirmPassword" 
-            [(ngModel)]="confirmPassword" 
-            name="confirmPassword" 
+            formControlName="confirmPassword"
             class="form-control form-control-lg rounded-pill shadow-sm px-4"
             placeholder="Confirm your password"
-            required
-            #confirmPasswordInput="ngModel"
           />
-          <div *ngIf="passwordMismatch && confirmPasswordInput.touched" class="text-danger mt-1 small">
+          <div *ngIf="registerForm.hasError('mismatch') && registerForm.get('confirmPassword')?.touched" class="text-danger mt-1 small">
             <i class="bi bi-exclamation-triangle me-1"></i>Passwords do not match.
           </div>
         </div>
@@ -109,8 +89,7 @@
           </label>
           <select 
             id="role" 
-            [(ngModel)]="role" 
-            name="role" 
+            formControlName="role"
             class="form-select form-select-lg rounded-pill shadow-sm"
           >
             <option value="Member">📚 Member (Borrow Books)</option>
@@ -121,7 +100,7 @@
         <!-- Submit Button -->
         <button 
           type="submit" 
-          [disabled]="loading" 
+          [disabled]="loading || registerForm.invalid"
           class="btn btn-primary w-100 btn-lg rounded-pill d-flex align-items-center justify-content-center gap-2 py-3 shadow-sm hover-scale"
         >
           <span *ngIf="loading" class="spinner-border spinner-border-sm" role="status"></span>
@@ -137,8 +116,9 @@
         <!-- Google Sign-Up Button -->
         <button 
           type="button" 
-          (click)="onGoogleRegister()" 
+          (click)="onGoogleRegister()"
           class="btn btn-outline-dark w-100 btn-lg rounded-pill d-flex align-items-center justify-content-center gap-2 py-3 hover-scale"
+          [disabled]="loading"
         >
           <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" width="20" height="20">
           <span>Sign up with Google</span>

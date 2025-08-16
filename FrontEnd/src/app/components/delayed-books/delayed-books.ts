@@ -1,14 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common'; // استيراد CommonModule
-import { BookService } from '../../services/book'; // غيري المسار حسب هيكل المشروع
-import { Book } from '../../models/book.model'; // غيري المسار حسب هيكل المشروع
+import { CommonModule } from '@angular/common';
+import { BookService } from '../../services/book';
+import { Book } from '../../models/book.model';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-delayed-books',
   templateUrl: './delayed-books.html',
   styleUrls: ['./delayed-books.css'],
-  standalone: true, // تأكدي إن الكومبوننت standalone
-  imports: [CommonModule] // أضف CommonModule هنا
+  standalone: true,
+  imports: [CommonModule]
 })
 export class DelayedBooks implements OnInit {
   delayedBooks: Book[] = [];
@@ -20,14 +21,25 @@ export class DelayedBooks implements OnInit {
   }
 
   loadDelayedBooks(): void {
-    const allBooks = this.bookService.getBooks(); // افتراض إن فيه دالة getBooks
-    const currentDate = new Date(); // التاريخ الحالي
-    this.delayedBooks = allBooks.filter(book => {
-      if (book.dueDate && book.borrowedDate) {
-        const dueDate = new Date(book.dueDate);
-        return dueDate < currentDate && book.available === false; // الكتب المتأخرة
+    const currentDate = new Date();
+
+    this.bookService.getBooks().pipe(
+      map((books: Book[]) =>
+        books.filter((book: Book) => {
+          if (book.dueDate && book.borrowedDate) {
+            const dueDate = new Date(book.dueDate);
+            return dueDate < currentDate && book.available === false;
+          }
+          return false;
+        })
+      )
+    ).subscribe({
+      next: (delayed: Book[]) => {
+        this.delayedBooks = delayed;
+      },
+      error: () => {
+        console.error('فشل في تحميل الكتب المتأخرة.');
       }
-      return false;
     });
   }
 }

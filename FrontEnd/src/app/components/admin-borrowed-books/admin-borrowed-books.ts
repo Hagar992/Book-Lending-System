@@ -3,6 +3,8 @@ import { BookService } from '../../services/book';
 import { AuthService } from '../../services/auth';
 import { Book } from '../../models/book.model';
 import { CommonModule } from '@angular/common';
+import { map } from 'rxjs/operators'; // ✅ ضروري لاستخدام pipe(map)
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-admin-borrowed-books',
@@ -28,12 +30,20 @@ export class AdminBorrowedBooks implements OnInit {
   loadBorrowedBooks(): void {
     this.loading = true;
     this.errorMessage = '';
-    try {
-      this.borrowedBooks = this.bookService.getBooks().filter(book => !book.available);
-    } catch (error) {
-     this.errorMessage = 'Failure To Download Borrowed Books';
-    } finally {
-      this.loading = false;
-    }
+
+    this.bookService.getBooks().pipe(
+      map((books: Book[]) =>
+        books.filter((book: Book) => !book.available)
+      )
+    ).subscribe({
+      next: (filteredBooks: Book[]) => {
+        this.borrowedBooks = filteredBooks;
+        this.loading = false;
+      },
+      error: () => {
+        this.errorMessage = 'فشل في تحميل الكتب المستعارة.';
+        this.loading = false;
+      }
+    });
   }
 }

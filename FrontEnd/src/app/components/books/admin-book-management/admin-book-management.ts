@@ -1,115 +1,151 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule, DatePipe } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { BookService } from '../../../services/book';
 import { Book } from '../../../models/book.model';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms'; 
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-admin-book-management',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    DatePipe
+  ],
   templateUrl: './admin-book-management.html',
   styleUrls: ['./admin-book-management.css']
 })
-export class AdminBookManagement {
+export class AdminBookManagement implements OnInit {
   books: Book[] = [];
-  showAddForm: boolean = false;
-  searchTerm: string = '';
-  filteredBooks: { [key: string]: Book[] } = {};
+  filteredBooks: Book[] = [];
+  uniqueCategories: string[] = []; // قائمة الفئات الفريدة فقط نصوص
+  booksByCategory: { [category: string]: Book[] } = {};
 
-  newBook: Partial<Book> = {
+  searchTerm: string = '';
+  showAddForm: boolean = false;
+  editingBook: Book | null = null;
+
+  newBook: Book = {
+    id: 0,
     title: '',
     author: '',
     available: true,
     coverUrl: '',
-    category: ''
+    category: '',
+    publishedDate: ''
   };
 
-  // تعريف الأقسام
-  categories = [
-    { name: 'Literature' },
-    { name: 'Religion' },
-    { name: 'Self-Development' },
-    { name: 'Biographies' },
-    { name: 'History' },
-    { name: 'Science' },
-    { name: 'Philosophy' }
-  ];     
+  constructor(private bookService: BookService) {}
 
-  constructor(private bookService: BookService, private router: Router) { 
-    this.initializeFilteredBooks();
+  ngOnInit(): void {
     this.loadBooks();
   }
 
-  // دالة تحميل الكتب
   loadBooks(): void {
-    const loadedBooks = this.bookService.getBooks();
-    this.books = Array.isArray(loadedBooks) ? loadedBooks : [];
-    console.log('Loaded books:', this.books);
-    this.updateFilteredBooks();
+    this.bookService.getBooks().subscribe(
+      (data) => {
+        this.books = data;
+        this.filteredBooks = data;
+        this.updateUniqueCategoriesAndBooksByCategory();
+      },
+      (error) => console.error('Error loading books:', error)
+    );
   }
 
-  // دالة تهيئة filteredBooks
-  initializeFilteredBooks() {
-    this.filteredBooks = {};
-    this.categories.forEach(category => {
-      this.filteredBooks[category.name] = [];
-    });
+  updateUniqueCategoriesAndBooksByCategory(): void {
+    // فلترة الفئات للتأكد من أنها ليست undefined أو فارغة
+    this.uniqueCategories = Array.from(new Set(
+      this.filteredBooks
+        .map(b => b.category)
+        .filter((c): c is string => !!c && c.trim().length > 0)
+    ));
+
+    // تجميع الكتب حسب الفئة
+    this.booksByCategory = {};
+    for (const book of this.filteredBooks) {
+      if (book.category && book.category.trim().length > 0) {
+        if (!this.booksByCategory[book.category]) {
+          this.booksByCategory[book.category] = [];
+        }
+        this.booksByCategory[book.category].push(book);
+      }
+    }
   }
 
-  toggleAddForm() {
+  onSearchTermChange(): void {
+    const term = this.searchTerm.trim().toLowerCase();
+    this.filteredBooks = this.books.filter(book =>
+      book.title.toLowerCase().includes(term)
+    );
+    this.updateUniqueCategoriesAndBooksByCategory();
+  }
+
+  toggleAddForm(): void {
     this.showAddForm = !this.showAddForm;
+    this.editingBook = null;
   }
 
-  submitNewBook() {
-    if (!this.newBook.title || !this.newBook.author || !this.newBook.category) {
-      alert('Please fill all required fields (Title, Author, and Category)!');
+  cancelAdd(): void {
+    this.showAddForm = false;
+    this.editingBook = null;
+    this.newBook = {
+      id: 0,
+      title: '',
+      author: '',
+      available: true,
+      coverUrl: '',
+      category: '',
+      publishedDate: ''
+    };
+  }
+
+  addBook(): void {
+    if (!this.newBook.title || !this.newBook.author || !this.newBook.category || !this.newBook.publishedDate) {
+      alert('Please fill in all required fields');
       return;
     }
-    // إضافة ID قبل الإرسال
-    const bookToAdd: Book = { ...this.newBook, id: Date.now() } as Book;
-    this.bookService.addBook(bookToAdd);
-    this.loadBooks(); // تحديث الكتب
-    this.updateFilteredBooks(); // تحديث filteredBooks يدويًا
-    this.resetForm(); // إغلاق الفورم ومسح البيانات
-    console.log('Added book:', bookToAdd);
-  }
 
-  resetForm() {
-    this.newBook = { title: '', author: '', available: true, coverUrl: '', category: '' };
-    this.showAddForm = false; // إغلاق الفورم
-  }
-
-  editBook(book: Book) {
-    this.router.navigate([`/admin/books/edit/${book.id}`]); 
-  }
-
-  deleteBook(id: number) {
-    this.bookService.deleteBook(id);
-    this.loadBooks();
-    this.updateFilteredBooks();
-  }
-
-  cancelAdd() {
-    this.resetForm();
-  }
-
-  searchBooks() {
-    if (this.searchTerm) {
-      this.categories.forEach(category => {
-        this.filteredBooks[category.name] = this.books.filter(book => 
-          book.title.toLowerCase().includes(this.searchTerm.toLowerCase()) && book.category === category.name.trim()
-        );
-      });
+    if (this.editingBook) {
+      // تحديث كتاب موجود
+      this.bookService.updateBook(this.newBook).subscribe(
+        (updatedBook) => {
+          const index = this.books.findIndex(b => b.id === updatedBook.id);
+          if (index !== -1) {
+            this.books[index] = updatedBook;
+          }
+          this.onSearchTermChange();
+          this.cancelAdd();
+        },
+        (error) => console.error('Error updating book:', error)
+      );
     } else {
-      this.updateFilteredBooks();
+      // إضافة كتاب جديد
+      this.bookService.addBook(this.newBook).subscribe(
+        (book) => {
+          this.books.push(book);
+          this.onSearchTermChange();
+          this.cancelAdd();
+        },
+        (error) => console.error('Error adding book:', error)
+      );
     }
   }
 
-  updateFilteredBooks() {
-    this.categories.forEach(category => {
-      this.filteredBooks[category.name] = this.books.filter(book => book.category === category.name.trim());
-    });
+  editBook(book: Book): void {
+    this.newBook = { ...book };
+    this.editingBook = book;
+    this.showAddForm = true;
+  }
+
+  deleteBook(id: number): void {
+    if (confirm('Are you sure you want to delete this book?')) {
+      this.bookService.deleteBook(id).subscribe(
+        () => {
+          this.books = this.books.filter(b => b.id !== id);
+          this.onSearchTermChange();
+        },
+        (error) => console.error('Error deleting book:', error)
+      );
+    }
   }
 }

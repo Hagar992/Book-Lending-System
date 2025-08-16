@@ -26,10 +26,9 @@ export class BookList implements OnInit {
     { name: 'Self-Development' },
     { name: 'Biographies' },
     { name: 'History' },
-    { name: ' Science' },
+    { name: 'Science' },
     { name: 'Philosophy' }
-    
-  ];  
+  ];
 
   constructor(
     private bookService: BookService,
@@ -39,24 +38,33 @@ export class BookList implements OnInit {
 
   ngOnInit(): void {
     if (this.authService.isAdmin()) {
-      this.router.navigate(['/admin/books']); // رجوع الأدمن لصفحة الأدمن
-      return; // توقف التنفيذ لو أدمن
+      this.router.navigate(['/admin/books']);
+      return;
     }
     this.loadBooks();
   }
 
   loadBooks(): void {
-    this.books = this.bookService.getBooks();
-    this.loading = false;
-    this.filterByCategory();
+    this.loading = true;
+    this.bookService.getBooks().subscribe({
+      next: (data: Book[]) => {
+        this.books = data;
+        this.filterByCategory();
+        this.loading = false;
+      },
+      error: () => {
+        console.error('فشل في تحميل الكتب.');
+        this.loading = false;
+      }
+    });
   }
 
   viewDetails(book: Book): void {
     this.router.navigate(['/books', book.id]);
   }
 
-  filterByCategory() {
-    this.filteredBooks = this.books.filter(book => {
+  filterByCategory(): void {
+    this.filteredBooks = this.books.filter((book: Book) => {
       const matchesCategory = !this.selectedCategory || book.category === this.selectedCategory;
       const matchesSearch = !this.searchTerm || book.title.toLowerCase().includes(this.searchTerm.toLowerCase());
       return matchesCategory && matchesSearch;

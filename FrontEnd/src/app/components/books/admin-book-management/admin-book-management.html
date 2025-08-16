@@ -3,7 +3,7 @@
 
   <!-- نموذج البحث -->
   <div class="mb-3">
-    <input type="text" class="form-control" placeholder="Search by book title..." [(ngModel)]="searchTerm" (ngModelChange)="searchBooks()" />
+    <input type="text" class="form-control" placeholder="Search by book title..." [(ngModel)]="searchTerm" (input)="onSearchTermChange()" />
   </div>
 
   <!-- زر إضافة كتاب جديد -->
@@ -12,7 +12,7 @@
   <!-- نموذج إضافة كتاب -->
   <div *ngIf="showAddForm" class="card p-4 mb-4">
     <h4 class="mb-3">Add a new book</h4>
-    <form (ngSubmit)="submitNewBook()" #bookForm="ngForm">
+    <form (ngSubmit)="addBook()" #bookForm="ngForm">
       <div class="mb-3">
         <label class="form-label">Title:</label>
         <input type="text" name="title" [(ngModel)]="newBook.title" class="form-control" required />
@@ -22,48 +22,49 @@
         <input type="text" name="author" [(ngModel)]="newBook.author" class="form-control" required />
       </div>
       <div class="mb-3">
-        <label class="form-label">Book Cover link (URL):</label>
-        <input type="url" name="coverUrl" [(ngModel)]="newBook.coverUrl" class="form-control" placeholder="https://example.com/cover.jpg" />
+        <label class="form-label">Book Cover URL:</label>
+        <input type="url" name="coverUrl" [(ngModel)]="newBook.coverUrl" class="form-control" />
       </div>
       <div class="mb-3">
         <label class="form-label">Category:</label>
-        <select name="category" [(ngModel)]="newBook.category" class="form-control" required>
-          <option value="" disabled selected>Select a category</option>
-          <option *ngFor="let category of categories" [value]="category.name">{{ category.name }}</option>
-        </select>
+        <input type="text" name="category" [(ngModel)]="newBook.category" class="form-control" required />
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Published Date:</label>
+        <input type="date" name="publishedDate" [(ngModel)]="newBook.publishedDate" class="form-control" required />
       </div>
       <div class="form-check mb-4">
         <input type="checkbox" name="available" [(ngModel)]="newBook.available" class="form-check-input" id="availableCheck" />
         <label class="form-check-label" for="availableCheck">Available</label>
       </div>
       <button type="submit" class="btn btn-success me-2">Save</button>
-      <button type="button" class="btn btn-secondary" (click)="cancelAdd()">Cancellation</button>
+      <button type="button" class="btn btn-secondary" (click)="cancelAdd()">Cancel</button>
     </form>
-    <div *ngIf="!showAddForm && newBook.title" class="alert alert-success mt-3" role="alert">
-      Book "{{ newBook.title }}" added successfully!
-    </div>
   </div>
 
-  <!-- قسمة الجدول حسب الأقسام -->
-  <div *ngFor="let category of categories">
-    <h5 class="mt-4 category-title" style="font-weight: bold; background-color: #f0f0f0; padding: 5px; border-radius: 5px;">{{ category.name }}</h5>
-    <div *ngIf="books.length === 0" class="alert alert-warning text-center">
-      No books available. Add a new book to get started!
-    </div>
-    <table class="table table-bordered table-striped table-hover mb-4" *ngIf="filteredBooks[category.name].length > 0">
+  <!-- رسالة لا يوجد كتب -->
+  <div *ngIf="filteredBooks.length === 0" class="alert alert-warning text-center">
+    No books available. Add a new book to get started!
+  </div>
+
+  <!-- تقسيم الكتب حسب الفئة -->
+  <div *ngFor="let category of uniqueCategories">
+    <h5 class="mt-4">{{ category }}</h5>
+    <table class="table table-bordered table-striped table-hover">
       <thead class="table-light">
         <tr>
-          <th scope="col">#</th>
-          <th scope="col">Title</th>
-          <th scope="col">Author</th>
-          <th scope="col">Status</th>
-          <th scope="col">Cover</th>
-          <th scope="col">Procedures</th>
+          <th>#</th>
+          <th>Title</th>
+          <th>Author</th>
+          <th>Status</th>
+          <th>Cover</th>
+          <th>Published Date</th>
+          <th>Actions</th>
         </tr>
       </thead>
-      <tbody class="table-group-divider">
-        <tr *ngFor="let book of filteredBooks[category.name]; let i = index">
-          <th scope="col">{{ i + 1 }}</th>
+      <tbody>
+        <tr *ngFor="let book of booksByCategory[category]; let i = index">
+          <td>{{ i + 1 }}</td>
           <td>{{ book.title }}</td>
           <td>{{ book.author }}</td>
           <td>
@@ -72,23 +73,17 @@
             </span>
           </td>
           <td>
-            <img *ngIf="book.coverUrl" [src]="book.coverUrl" alt="{{ book.title }} - Cover" style="width: 50px; height: 75px; object-fit: cover;" />
-            <span *ngIf="!book.coverUrl">There is no cover</span>
+            <img *ngIf="book.coverUrl" [src]="book.coverUrl" alt="{{ book.title }} Cover"
+              style="width:50px;height:75px;object-fit:cover;">
+            <span *ngIf="!book.coverUrl">No cover</span>
           </td>
+          <td>{{ book.publishedDate | date }}</td>
           <td>
-            <button class="btn btn-sm btn-success me-1" (click)="editBook(book)">Edit</button>
-            <button class="btn btn-sm btn-danger" (click)="deleteBook(book.id)">Delete</button>
+            <button class="btn btn-warning btn-sm me-2" (click)="editBook(book)">Edit</button>
+            <button class="btn btn-danger btn-sm" (click)="deleteBook(book.id)">Delete</button>
           </td>
         </tr>
       </tbody>
     </table>
-    <div *ngIf="filteredBooks[category.name]?.length === 0" class="alert alert-info">
-      No books in this category.
-    </div>
-  </div>
-
-  <!-- رسالة لو مفيش كتب خالص (اختيارية) -->
-  <div *ngIf="books.length === 0" class="alert alert-warning text-center">
-    No books available. Add a new book to get started!
   </div>
 </div>

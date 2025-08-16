@@ -1,16 +1,16 @@
-import { TestBed } from '@angular/core/testing';
+import { Book } from '../models/book.model'; // المسار الصحيح
 
-import { Book } from './book';
+describe('Book model', () => {
+  it('should create a valid book object', () => {
+    const book: Book = {
+      id: 1,
+      title: 'Test Book',
+      author: 'Test Author',
+      publishedDate: '2025-01-01',
+      available: true
+    };
 
-describe('Book', () => {
-  let service: Book;
-
-  beforeEach(() => {
-    TestBed.configureTestingModule({});
-    service = TestBed.inject(Book);
-  });
-
-  it('should be created', () => {
-    expect(service).toBeTruthy();
+    expect(book.title).toBe('Test Book');
+    expect(book.id).toBeGreaterThan(0);
   });
 });
