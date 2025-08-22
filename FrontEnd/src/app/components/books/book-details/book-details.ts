@@ -27,7 +27,7 @@ export class BookDetails implements OnInit {
   editMode: boolean = false;
   hasBorrowedBook: boolean = false;
   borrowedBookId: number | null = null;
-  dueDate: string | undefined = undefined; // تغيير من string | null إلى string | undefined
+  dueDate: string | undefined = undefined; 
   loading: boolean = false;
   errorMessage: string = '';
 
@@ -48,7 +48,7 @@ export class BookDetails implements OnInit {
           this.checkBorrowedStatus();
         },
         error: () => {
-          this.errorMessage = 'فشل في تحميل بيانات الكتاب';
+          this.errorMessage = 'Failure to download book data';
         }
       });
     }
@@ -69,8 +69,7 @@ export class BookDetails implements OnInit {
         if (borrowedBook) {
           this.hasBorrowedBook = true;
           this.borrowedBookId = borrowedBook.id;
-          this.dueDate = borrowedBook.dueDate; // يمكن يكون undefined
-        } else {
+          this.dueDate = borrowedBook.dueDate; 
           this.hasBorrowedBook = false;
           this.borrowedBookId = null;
           this.dueDate = undefined;
@@ -78,19 +77,13 @@ export class BookDetails implements OnInit {
         this.loading = false;
       },
       error: () => {
-        this.errorMessage = 'فشل في تحميل حالة الاستعارة';
+        this.errorMessage = 'Failure to download the metaphor';
         this.loading = false;
       }
     });
   }
 
-  toggleEditMode(): void {
-    if (this.authService.isAdmin()) {
-      this.editMode = !this.editMode;
-    } else {
-      this.errorMessage = 'لا يمكنك تعديل البيانات، يرجى الاتصال بالمسؤول.';
-    }
-  }
+  
 
   saveChanges(): void {
     this.bookService.updateBook(this.book).subscribe({
@@ -99,7 +92,7 @@ export class BookDetails implements OnInit {
         this.router.navigate(['/admin/books']);
       },
       error: () => {
-        this.errorMessage = 'فشل في حفظ التغييرات';
+        this.errorMessage ='Failure to save changes';
       }
     });
   }
@@ -109,36 +102,39 @@ export class BookDetails implements OnInit {
     this.router.navigate(['/admin/books']);
   }
 
-  borrowBook(): void {
-    this.loading = true;
-    this.errorMessage = '';
-    if (this.book.available && !this.hasBorrowedBook) {
-      const currentUser = this.authService.getCurrentUser();
-      if (currentUser) {
-        const updatedBook = {
-          ...this.book,
-          available: false,
-          userId: currentUser.email,
-          borrowedDate: new Date().toISOString(),
-          dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
-        };
-        this.bookService.updateBook(updatedBook).subscribe({
-          next: () => {
-            this.book = updatedBook;
-            this.hasBorrowedBook = true;
-            this.borrowedBookId = this.book.id;
-            this.dueDate = this.book.dueDate; // يمكن يكون string
-          },
-          error: () => {
-            this.errorMessage = 'فشل في استعارة الكتاب';
-          }
-        });
-      }
-    } else {
-      this.errorMessage = 'الكتاب مستعار بالفعل أو عندك كتاب معار حاليًا.';
+borrowBook(): void {
+  this.loading = true;
+  this.errorMessage = '';
+
+  if (this.book.available && !this.hasBorrowedBook) {
+    const currentUser = this.authService.getCurrentUser();
+    if (currentUser) {
+      const updatedBook = {
+        ...this.book,
+        available: false,
+        userId: currentUser.email,
+        borrowedDate: new Date().toISOString(),
+        dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString() // بعد 7 أيام
+      };
+      this.bookService.updateBook(updatedBook).subscribe({
+        next: () => {
+          this.book = updatedBook;
+          this.hasBorrowedBook = true;
+          this.borrowedBookId = this.book.id;
+          this.dueDate = this.book.dueDate; 
+        },
+        error: () => {
+          this.errorMessage = 'Failure to borrow the book';
+        }
+      });
     }
-    this.loading = false;
+  } else {
+    this.errorMessage = 'The book is already borrowed or you have a currently loaned book.';
   }
+
+  this.loading = false;
+}
+
 
   returnBook(): void {
     this.loading = true;
@@ -157,14 +153,14 @@ export class BookDetails implements OnInit {
           this.book = updatedBook;
           this.hasBorrowedBook = false;
           this.borrowedBookId = null;
-          this.dueDate = undefined; // يمكن يكون undefined
+          this.dueDate = undefined; 
         },
         error: () => {
-          this.errorMessage = 'فشل في إرجاع الكتاب';
+          this.errorMessage = 'Failure to return the book';
         }
       });
     } else {
-      this.errorMessage = 'لا يمكنك إرجاع كتاب لم تستعره أو الكتاب متاح بالفعل.';
+      this.errorMessage = "You cannot return a book that you did not borrow or the book is already available.";
     }
     this.loading = false;
   }

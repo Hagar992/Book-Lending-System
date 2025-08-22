@@ -1,86 +1,145 @@
-<div class="card p-4 mb-4">
-  <h4 class="mb-3">Admin Book Management</h4>
+<div class="container mt-4">
+  <h2 class="text-center mb-4">📚 Book Management</h2>
 
-  <!-- نموذج البحث -->
-  <div class="mb-3">
-    <input type="text" class="form-control" placeholder="Search by book title..." [(ngModel)]="searchTerm" (input)="onSearchTermChange()" />
-  </div>
+  
+  <button class="btn btn-primary mb-3" (click)="toggleAddForm()">+ Add New Book</button>
 
-  <!-- زر إضافة كتاب جديد -->
-  <button class="btn btn-primary mb-3" (click)="toggleAddForm()">Add New Book</button>
+  <!--  نموذج إضافة / تعديل كتاب -->
+  <div *ngIf="showAddForm" class="card p-4 shadow mb-4">
+    <h4>{{ editingBook ? '✏️ Edit Book' : '➕ Add New Book' }}</h4>
 
-  <!-- نموذج إضافة كتاب -->
-  <div *ngIf="showAddForm" class="card p-4 mb-4">
-    <h4 class="mb-3">Add a new book</h4>
-    <form (ngSubmit)="addBook()" #bookForm="ngForm">
-      <div class="mb-3">
-        <label class="form-label">Title:</label>
-        <input type="text" name="title" [(ngModel)]="newBook.title" class="form-control" required />
+    <form (ngSubmit)="addOrUpdateBook()" #bookForm="ngForm">
+      <div class="form-group mb-3">
+        <label for="title">Title</label>
+        <input
+          type="text"
+          class="form-control"
+          id="title"
+          [(ngModel)]="newBook.title"
+          name="title"
+          required
+        />
       </div>
-      <div class="mb-3">
-        <label class="form-label">Author:</label>
-        <input type="text" name="author" [(ngModel)]="newBook.author" class="form-control" required />
+
+      <div class="form-group mb-3">
+        <label for="author">Author</label>
+        <input
+          type="text"
+          class="form-control"
+          id="author"
+          [(ngModel)]="newBook.author"
+          name="author"
+          required
+        />
       </div>
-      <div class="mb-3">
-        <label class="form-label">Book Cover URL:</label>
-        <input type="url" name="coverUrl" [(ngModel)]="newBook.coverUrl" class="form-control" />
+
+      <div class="form-group mb-3">
+        <label for="category">Category</label>
+        <input
+          type="text"
+          class="form-control"
+          id="category"
+          [(ngModel)]="newBook.category"
+          name="category"
+          required
+        />
       </div>
-      <div class="mb-3">
-        <label class="form-label">Category:</label>
-        <input type="text" name="category" [(ngModel)]="newBook.category" class="form-control" required />
+
+      <div class="form-group mb-3">
+        <label for="publishedDate">Published Date</label>
+        <input
+          type="date"
+          class="form-control"
+          id="publishedDate"
+          [(ngModel)]="newBook.publishedDate"
+          name="publishedDate"
+          required
+        />
       </div>
-      <div class="mb-3">
-        <label class="form-label">Published Date:</label>
-        <input type="date" name="publishedDate" [(ngModel)]="newBook.publishedDate" class="form-control" required />
+
+      <div class="form-group mb-3">
+        <label for="coverUrl">Cover URL</label>
+        <input
+          type="text"
+          class="form-control"
+          id="coverUrl"
+          [(ngModel)]="newBook.coverUrl"
+          name="coverUrl"
+        />
       </div>
-      <div class="form-check mb-4">
-        <input type="checkbox" name="available" [(ngModel)]="newBook.available" class="form-check-input" id="availableCheck" />
-        <label class="form-check-label" for="availableCheck">Available</label>
+
+      <div class="form-check mb-3">
+        <input
+          type="checkbox"
+          class="form-check-input"
+          id="available"
+          [(ngModel)]="newBook.available"
+          name="available"
+        />
+        <label for="available" class="form-check-label">Available</label>
       </div>
-      <button type="submit" class="btn btn-success me-2">Save</button>
+
+      <button type="submit" class="btn btn-success me-2">
+        {{ editingBook ? 'Update' : 'Save' }}
+      </button>
       <button type="button" class="btn btn-secondary" (click)="cancelAdd()">Cancel</button>
     </form>
   </div>
 
-  <!-- رسالة لا يوجد كتب -->
+  <!-- لو مفيش كتب -->
   <div *ngIf="filteredBooks.length === 0" class="alert alert-warning text-center">
     No books available. Add a new book to get started!
   </div>
 
-  <!-- تقسيم الكتب حسب الفئة -->
+  <!--  عرض الكتب حسب الأقسام -->
   <div *ngFor="let category of uniqueCategories">
-    <h5 class="mt-4">{{ category }}</h5>
+    <h4 class="mt-4">{{ category }}</h4>
     <table class="table table-bordered table-striped table-hover">
-      <thead class="table-light">
+      <thead class="table-dark">
         <tr>
           <th>#</th>
+          <th>Cover</th>
           <th>Title</th>
           <th>Author</th>
-          <th>Status</th>
-          <th>Cover</th>
           <th>Published Date</th>
+          <th>Status</th>
           <th>Actions</th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let book of booksByCategory[category]; let i = index">
           <td>{{ i + 1 }}</td>
+          <td>
+            <img
+              *ngIf="book.coverUrl; else noCover"
+              [src]="book.coverUrl"
+              alt="Cover"
+              width="50"
+              height="70"
+              style="object-fit: cover;"
+            />
+            <ng-template #noCover>❌</ng-template>
+          </td>
           <td>{{ book.title }}</td>
           <td>{{ book.author }}</td>
+          <td>{{ book.publishedDate | date }}</td>
           <td>
-            <span [ngClass]="book.available ? 'text-success' : 'text-danger'">
+            <span
+              [ngClass]="{
+                'badge bg-success': book.available,
+                'badge bg-danger': !book.available
+              }"
+            >
               {{ book.available ? 'Available' : 'Borrowed' }}
             </span>
           </td>
           <td>
-            <img *ngIf="book.coverUrl" [src]="book.coverUrl" alt="{{ book.title }} Cover"
-              style="width:50px;height:75px;object-fit:cover;">
-            <span *ngIf="!book.coverUrl">No cover</span>
-          </td>
-          <td>{{ book.publishedDate | date }}</td>
-          <td>
-            <button class="btn btn-warning btn-sm me-2" (click)="editBook(book)">Edit</button>
-            <button class="btn btn-danger btn-sm" (click)="deleteBook(book.id)">Delete</button>
+            <button class="btn btn-warning btn-sm me-2" (click)="editBook(book)">
+              Edit
+            </button>
+            <button class="btn btn-danger btn-sm" (click)="deleteBook(book.id)">
+              Delete
+            </button>
           </td>
         </tr>
       </tbody>

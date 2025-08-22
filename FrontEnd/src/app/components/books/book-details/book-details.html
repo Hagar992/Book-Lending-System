@@ -1,5 +1,7 @@
 <div class="card p-4 mb-4">
   <h4 class="mb-3">Book Details</h4>
+
+  <!-- وضع تعديل الكتاب -->
   <form *ngIf="editMode" (ngSubmit)="saveChanges()" #editForm="ngForm">
     <div class="mb-3">
       <label class="form-label"> Title: </label>
@@ -20,21 +22,39 @@
     <button type="submit" class="btn btn-success me-2">Save</button>
     <button type="button" class="btn btn-secondary" (click)="cancel()">Cancel</button>
   </form>
+
+  <!-- وضع عرض تفاصيل الكتاب -->
   <div *ngIf="!editMode">
     <p>Title: {{ book.title }}</p>
     <p>Author: {{ book.author }}</p>
-    <p>Status: <span [ngClass]="book.available ? 'text-success' : 'text-danger'">{{ book.available ? 'Available' : 'Borrowed' }}</span></p>
+    <p>Status:
+      <span [ngClass]="book.available ? 'text-success' : 'text-danger'">
+        {{ book.available ? 'Available' : 'Borrowed' }}
+      </span>
+    </p>
     <p *ngIf="book.dueDate">Due Date: {{ book.dueDate | date }}</p>
+
     <div class="mt-3" *ngIf="loading">
       <div class="spinner-border text-primary" role="status">
         <span class="visually-hidden">Loading...</span>
       </div>
     </div>
     <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+
+    <!-- أزرار الحجز والإرجاع -->
     <div class="mt-3">
-      <button *ngIf="book.available && !hasBorrowedBook" (click)="borrowBook()" class="btn btn-primary me-2">Borrow</button>
-      <button *ngIf="!book.available && hasBorrowedBook && borrowedBookId === book.id" (click)="returnBook()" class="btn btn-success me-2">Return</button>
-      <button (click)="toggleEditMode()" class="btn btn-info">Edit</button>
+      <button *ngIf="book.available && !hasBorrowedBook"
+              (click)="borrowBook()"
+              class="btn btn-primary me-2">Borrow</button>
+
+      <button *ngIf="!book.available && hasBorrowedBook && borrowedBookId === book.id"
+              (click)="returnBook()"
+              class="btn btn-success me-2">Return</button>
+    </div>
+
+    <!--  رسالة توضح للمستخدم تاريخ الإرجاع بعد الحجز -->
+    <div *ngIf="dueDate" class="alert alert-info mt-3">
+      📅 You have borrowed this book. Please return it by <strong>{{ dueDate | date }}</strong>.
     </div>
   </div>
 </div>

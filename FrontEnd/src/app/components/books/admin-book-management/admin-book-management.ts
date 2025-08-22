@@ -7,38 +7,38 @@ import { Book } from '../../../models/book.model';
 @Component({
   selector: 'app-admin-book-management',
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    DatePipe
-  ],
+  imports: [CommonModule, FormsModule, DatePipe],
   templateUrl: './admin-book-management.html',
   styleUrls: ['./admin-book-management.css']
 })
 export class AdminBookManagement implements OnInit {
   books: Book[] = [];
   filteredBooks: Book[] = [];
-  uniqueCategories: string[] = []; // قائمة الفئات الفريدة فقط نصوص
+  uniqueCategories: string[] = [];
   booksByCategory: { [category: string]: Book[] } = {};
 
   searchTerm: string = '';
   showAddForm: boolean = false;
   editingBook: Book | null = null;
 
-  newBook: Book = {
-    id: 0,
-    title: '',
-    author: '',
-    available: true,
-    coverUrl: '',
-    category: '',
-    publishedDate: ''
-  };
+  newBook: Book = this.getEmptyBook();
 
   constructor(private bookService: BookService) {}
 
   ngOnInit(): void {
     this.loadBooks();
+  }
+
+  private getEmptyBook(): Book {
+    return {
+      id: 0,
+      title: '',
+      author: '',
+      available: true,
+      coverUrl: '',
+      category: '',
+      publishedDate: ''
+    };
   }
 
   loadBooks(): void {
@@ -53,17 +53,13 @@ export class AdminBookManagement implements OnInit {
   }
 
   updateUniqueCategoriesAndBooksByCategory(): void {
-    // فلترة الفئات للتأكد من أنها ليست undefined أو فارغة
     this.uniqueCategories = Array.from(new Set(
-      this.filteredBooks
-        .map(b => b.category)
-        .filter((c): c is string => !!c && c.trim().length > 0)
+      this.filteredBooks.map(b => b.category).filter((c): c is string => !!c?.trim())
     ));
 
-    // تجميع الكتب حسب الفئة
     this.booksByCategory = {};
     for (const book of this.filteredBooks) {
-      if (book.category && book.category.trim().length > 0) {
+      if (book.category?.trim()) {
         if (!this.booksByCategory[book.category]) {
           this.booksByCategory[book.category] = [];
         }
@@ -83,38 +79,29 @@ export class AdminBookManagement implements OnInit {
   toggleAddForm(): void {
     this.showAddForm = !this.showAddForm;
     this.editingBook = null;
+    this.newBook = this.getEmptyBook();
   }
 
   cancelAdd(): void {
     this.showAddForm = false;
     this.editingBook = null;
-    this.newBook = {
-      id: 0,
-      title: '',
-      author: '',
-      available: true,
-      coverUrl: '',
-      category: '',
-      publishedDate: ''
-    };
+    this.newBook = this.getEmptyBook();
   }
 
-  addBook(): void {
+  addOrUpdateBook(): void {
     if (!this.newBook.title || !this.newBook.author || !this.newBook.category || !this.newBook.publishedDate) {
       alert('Please fill in all required fields');
       return;
     }
 
     if (this.editingBook) {
-      // تحديث كتاب موجود
+      // تحديث كتاب
       this.bookService.updateBook(this.newBook).subscribe(
         (updatedBook) => {
           const index = this.books.findIndex(b => b.id === updatedBook.id);
-          if (index !== -1) {
-            this.books[index] = updatedBook;
-          }
+          if (index !== -1) this.books[index] = updatedBook;
           this.onSearchTermChange();
-          this.cancelAdd();
+          this.cancelAdd(); // يقفل الفورم بعد التحديث
         },
         (error) => console.error('Error updating book:', error)
       );
@@ -124,7 +111,7 @@ export class AdminBookManagement implements OnInit {
         (book) => {
           this.books.push(book);
           this.onSearchTermChange();
-          this.cancelAdd();
+          this.cancelAdd(); // يقفل الفورم بعد الإضافة
         },
         (error) => console.error('Error adding book:', error)
       );
@@ -134,7 +121,7 @@ export class AdminBookManagement implements OnInit {
   editBook(book: Book): void {
     this.newBook = { ...book };
     this.editingBook = book;
-    this.showAddForm = true;
+    this.showAddForm = true; // يفتح الفورم في وضع التعديل
   }
 
   deleteBook(id: number): void {

@@ -53,7 +53,7 @@ export class BookList implements OnInit {
         this.loading = false;
       },
       error: () => {
-        console.error('فشل في تحميل الكتب.');
+        console.error('Failure to download books.');
         this.loading = false;
       }
     });
