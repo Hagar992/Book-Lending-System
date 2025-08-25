@@ -4,7 +4,7 @@
 
 This project is a **Full-Stack .NET Web Application** built using modern technologies for both the backend and frontend. It is designed with scalability, maintainability, and clean architecture in mind.
 
-The application demonstrates **CRUD operations, authentication, responsive UI, and database integration**. It follows **MVC architecture** on the backend with ASP.NET Core and a structured frontend built with HTML, CSS, and JavaScript.
+The application demonstrates **CRUD operations, authentication, responsive UI, and database integration**. It follows **MVC architecture** on the backend with ASP.NET Core and a structured frontend built with Angular,HTML, CSS, and JavaScript.
 
 ---
 
