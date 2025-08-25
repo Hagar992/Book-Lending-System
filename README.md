@@ -1,4 +1,3 @@
-تمام 👍
 # 📌 Full-Stack .NET Project
 
 ## 📖 Overview
@@ -115,28 +114,28 @@ or serve it with Live Server in VS Code.
 
 ### 🔹 LogIn
 
-![LogIn](<img width="1313" height="632" alt="image" src="https://github.com/user-attachments/assets/218e2f07-e41d-4854-8adf-4d3a0e95b7ac" />
+(<img width="1313" height="632" alt="image" src="https://github.com/user-attachments/assets/218e2f07-e41d-4854-8adf-4d3a0e95b7ac" />
 )
 (<img width="444" height="548" alt="image" src="https://github.com/user-attachments/assets/dda80a4b-b213-4b8c-8d7b-da8551c962d8" />
 )
 
 ### 🔹 Create Account
 
-![Dashboard](<img width="1335" height="663" alt="image" src="https://github.com/user-attachments/assets/f6583414-47d3-49ab-805d-7c26e3af354f" />
+(<img width="1335" height="663" alt="image" src="https://github.com/user-attachments/assets/f6583414-47d3-49ab-805d-7c26e3af354f" />
 )
 (<img width="1331" height="646" alt="image" src="https://github.com/user-attachments/assets/f9332b51-054c-43d9-b5ed-12ef7dcebd22" />
 )
 
 ### 🔹Home
 
-![Dashboard](<img width="1342" height="652" alt="image" src="https://github.com/user-attachments/assets/61b05f35-6929-4998-8f7e-43ceb9ecfcc2" />
+(<img width="1342" height="652" alt="image" src="https://github.com/user-attachments/assets/61b05f35-6929-4998-8f7e-43ceb9ecfcc2" />
 )
 (<img width="1314" height="593" alt="image" src="https://github.com/user-attachments/assets/5c7c9d61-1ecd-46a5-a71c-0b55499cbd88" />
 )
 
 ### 🔹Books list
 
-![Dashboard](<img width="1318" height="667" alt="image" src="https://github.com/user-attachments/assets/d70e58b0-85ba-420b-a429-316765533167" />
+(<img width="1318" height="667" alt="image" src="https://github.com/user-attachments/assets/d70e58b0-85ba-420b-a429-316765533167" />
 )
 (<img width="1316" height="561" alt="image" src="https://github.com/user-attachments/assets/19a9fcf5-f0ec-4ba4-a014-afcad3070497" />
 )
@@ -149,12 +148,12 @@ or serve it with Live Server in VS Code.
 
 ### 🔹 All Borrowed Books(For Admin)
 
-![Dashboard](<img width="1329" height="499" alt="image" src="https://github.com/user-attachments/assets/d4f5bbe9-717f-42bc-aa80-26894ac1ae22" />
+(<img width="1329" height="499" alt="image" src="https://github.com/user-attachments/assets/d4f5bbe9-717f-42bc-aa80-26894ac1ae22" />
 )
 
 ### 🔹 Book Management (For Admin)
 
-![Dashboard](<img width="1320" height="654" alt="image" src="https://github.com/user-attachments/assets/a8ca2405-2329-419d-9fa7-54e6c08bdc74" />
+(<img width="1320" height="654" alt="image" src="https://github.com/user-attachments/assets/a8ca2405-2329-419d-9fa7-54e6c08bdc74" />
 )
 
 
