@@ -17,7 +17,8 @@ __________________________________________________
 
 ## ⚙️ Tech Stack
 
-# 🔹 Backend
+
+### 🔹 Backend
 
 - ASP.NET Core 7 (Web API + MVC)
 
@@ -32,7 +33,7 @@ __________________________________________________
 - Dependency Injection
 
 
-# 🔹 Frontend
+### 🔹 Frontend
 
 - Angular 17
 
@@ -45,11 +46,11 @@ __________________________________________________
 - Reusable Components & Guards & Interceptors
   
 
-# 🔹 Deployment & DevOps
+### 🔹 Deployment & DevOps
 
 - Docker (Dockerfile To BackEnd & FrontEnd)
 
-  ___________________________________________
+___________________________________________
 
 ## 🚀 Features
 
@@ -65,7 +66,7 @@ __________________________________________________
 
 - Validation & Error handling.
 
-## ✅ Frontend Features
+### ✅ Frontend Features
 
 - Modern & Responsive UI.
 
@@ -121,9 +122,9 @@ Book-Lending-System/
 └── README.md
 
 ```
-# 🐳 Docker Support
+## 🐳 Docker Support
 
-## Dockerfiles have been added to run both the FrontEnd and BackEnd inside Docker containers.
+### Dockerfiles have been added to run both the FrontEnd and BackEnd inside Docker containers.
 
 ### 🔹 Run Backend with Docker
 
