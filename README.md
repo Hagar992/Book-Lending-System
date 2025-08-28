@@ -1,79 +1,149 @@
-# 📌 Full-Stack .NET Project
+# 📚 Book Lending System – Full Stack Project
+_____________________________
 
 ## 📖 Overview
 
-This project is a **Full-Stack .NET Web Application** built using modern technologies for both the backend and frontend. It is designed with scalability, maintainability, and clean architecture in mind.
+#### The Book Lending System is a Full-Stack Web Application built with:
 
-The application demonstrates **CRUD operations, authentication, responsive UI, and database integration**. It follows **MVC architecture** on the backend with ASP.NET Core and a structured frontend built with Angular,HTML, CSS, and JavaScript.
+- BackEnd: ASP.NET Core 7 + Entity Framework Core + SQL Server
 
----
+- FrontEnd: Angular 17
+
+- Deployment: Docker support for easy setup and distribution
+
+The project provides full CRUD operations, user authentication, and a modern, interactive user interface.
+__________________________________________________
+
 
 ## ⚙️ Tech Stack
 
-### 🔹 Backend
+# 🔹 Backend
 
-* **ASP.NET Core MVC** – Main framework for backend development.
-* **C#** – Business logic implementation.
-* **Entity Framework Core (Code First)** – Database handling and migrations.
-* **SQL Server** – Relational database system.
-* **LINQ** – Data querying.
-* **Dependency Injection** – For clean and testable code.
+- ASP.NET Core 7 (Web API + MVC)
 
-### 🔹 Frontend
+- C#
 
-* **HTML5** – Structure of the web pages.
-* **CSS3** – Styling, responsive layouts, and animations.
-* **JavaScript (ES6+)** – Client-side interactivity.
-* **Bootstrap (optional)** – For additional responsiveness (if used).
+- Entity Framework Core (Code First)
 
----
+- SQL Server / PostgreSQL (يمكن استخدام Neon)
+
+- LINQ
+
+- Dependency Injection
+
+
+# 🔹 Frontend
+
+- Angular 17
+
+- HTML5 / CSS3
+
+- TypeScript
+
+- Bootstrap
+
+- Reusable Components & Guards & Interceptors
+  
+
+# 🔹 Deployment & DevOps
+
+- Docker (Dockerfile To BackEnd & FrontEnd)
+
+  ___________________________________________
 
 ## 🚀 Features
 
 ### ✅ Backend Features
 
-* User authentication & authorization.
-* CRUD operations (Create, Read, Update, Delete).
-* Code-First Database approach with migrations.
-* Separation of concerns using **MVC pattern**.
-* Validation (server-side & client-side).
-* RESTful endpoints for API integration.
+- User Authentication & Authorization (JWT).
 
-### ✅ Frontend Features
+- RESTful API endpoints.
 
-* Fully responsive design (works on desktop & mobile).
-* Modern UI with reusable components.
-* Interactive forms with validation.
-* Dynamic search and filtering functionality.
-* Clean navigation bar with dropdowns and icons.
-* Smooth animations & hover effects.
+- CRUD (Books, Users, Borrowed Books).
 
+- Code-First migrations.
+
+- Validation & Error handling.
+
+## ✅ Frontend Features
+
+- Modern & Responsive UI.
+
+- Login & Register forms.
+
+- Books management (Add / Edit / Delete / Borrow).
+
+- Dashboard (Admin & User).
+
+- Guards & Interceptors for auth handling.
+
+__________________________________________________________
 ---
 
 ## 🗂️ Project Structure
 
 ```
-FullStackApp/
+Book-Lending-System/
 │
-├── Backend/
-│   ├── Controllers/
-│   ├── Models/
-│   ├── Views/
-│   ├── Migrations/
-│   ├── wwwroot/
-│   └── Program.cs
+├── BackEnd/  
+│   ├── BackEnd.sln  
+│   ├── BackEnd/  
+│   │   ├── Controllers/  
+│   │   │   ├── AuthController.cs  
+│   │   │   ├── BooksController.cs  
+│   │   │   └── WeatherForecastController.cs  
+│   │   ├── Data/ (DbContext + Migrations)  
+│   │   ├── Dtos/  
+│   │   ├── Models/  
+│   │   ├── Properties/  
+│   │   ├── Program.cs  
+│   │   ├── appsettings.json  
+│   │   ├── BackEnd.csproj  
+│   │   └── Dockerfile  
 │
-├── Frontend/
-│   ├── index.html
-│   ├── styles.css
-│   └── script.js
-│
-├── Database/
-│   └── FullStackApp.mdf
+├── FrontEnd/  
+│   ├── src/  
+│   │   ├── app/  
+│   │   │   ├── components/  
+│   │   │   ├── pages/  
+│   │   │   ├── services/  
+│   │   │   ├── guards/  
+│   │   │   ├── interceptors/  
+│   │   │   └── app.ts  
+│   │   ├── index.html  
+│   │   ├── styles.css  
+│   │   └── main.ts  
+│   ├── angular.json  
+│   ├── package.json  
+│   ├── tsconfig.json  
+│   └── Dockerfile  
 │
 └── README.md
-```
 
+```
+# 🐳 Docker Support
+
+## Dockerfiles have been added to run both the FrontEnd and BackEnd inside Docker containers.
+
+### 🔹 Run Backend with Docker
+
+- cd BackEnd/BackEnd
+- docker build -t book-lending-backend .
+- docker run -d -p 5000:5000 book-lending-backend
+
+
+### 🔹 Run Frontend with Docker
+
+- cd FrontEnd
+- docker build -t book-lending-frontend .
+- docker run -d -p 4200:80 book-lending-frontend
+
+
+### After running the containers:
+
+- Backend API → http://localhost:5000
+
+- Frontend UI → http://localhost:4200
 ---
 
 ## 🛠️ Installation & Setup
@@ -171,8 +241,7 @@ Contributions are welcome!
 ---
 
 
-⚡ Developed with passion by **Shams A.**
+⚡ Developed with passion by **Hagar Atia Elzahar**
 
 ---
 
-تحبي أضيفلك كمان جزء **Installation for Deployment (Netlify + Azure Hosting)** ولا تكتفي بكده؟
