@@ -10,6 +10,6 @@ bootstrapApplication(App, {
   providers: [
     provideRouter(routes),
     provideHttpClient(withInterceptorsFromDi()), // السماح بالـ interceptors من DI
-    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true } // تسجيل الـ interceptor
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
   ]
 });
