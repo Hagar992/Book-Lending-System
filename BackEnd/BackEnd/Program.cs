@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Npgsql.EntityFrameworkCore.PostgreSQL; 
 using BackEnd.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -10,8 +10,25 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllers();
 
-// Add DbContext with SQL Server
-builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+// Add DbContext with SQL Server &PostgreSQL
+
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+{
+    if (builder.Environment.IsProduction())
+    {
+        // في بيئة الإنتاج (Railway)، استخدم PostgreSQL
+        options.UseNpgsql(connectionString);
+    }
+    else
+    {
+        // في بيئة التطوير (جهازك المحلي)، استخدم SQL Server
+        options.UseSqlServer(connectionString);
+    }
+});
+
+
 // Enable CORS
 builder.Services.AddCors(options =>
 {
