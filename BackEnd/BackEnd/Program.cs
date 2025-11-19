@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Npgsql.EntityFrameworkCore.PostgreSQL; 
+using Npgsql.EntityFrameworkCore.PostgreSQL;
 using BackEnd.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -10,24 +10,19 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllers();
 
-// Add DbContext with SQL Server &PostgreSQL
-
+// Add DbContext with SQL Server & PostgreSQL
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     if (builder.Environment.IsProduction())
     {
-        // في بيئة الإنتاج (Railway)، استخدم PostgreSQL
         options.UseNpgsql(connectionString);
     }
     else
     {
-        // في بيئة التطوير (جهازك المحلي)، استخدم SQL Server
         options.UseSqlServer(connectionString);
     }
 });
-
 
 // Enable CORS
 builder.Services.AddCors(options =>
@@ -41,7 +36,6 @@ builder.Services.AddCors(options =>
             .AllowCredentials();
     });
 });
-
 
 // Add Authentication using JWT Bearer
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -69,8 +63,31 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
-builder.WebHost.UseUrls($"http://*:{port}" );
+builder.WebHost.UseUrls($"http://*:{port}");
+
 var app = builder.Build();
+
+// --- تشغيل الـ Migrations تلقائيًا لإنشاء الجداول في قاعدة البيانات ---
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<ApplicationDbContext>();
+        // GetPendingMigrations() يتحقق إذا كانت هناك أي تحديثات لم يتم تطبيقها
+        if (context.Database.GetPendingMigrations().Any())
+        {
+           
+            context.Database.Migrate();
+        }
+    }
+    catch (Exception ex)
+    {
+        
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred while migrating the database.");
+    }
+}
 
 // Middleware
 if (app.Environment.IsDevelopment())
@@ -84,7 +101,7 @@ if (app.Environment.IsDevelopment())
 app.UseCors("AllowAngularApp");
 
 // Uncomment if you have HTTPS redirection set up
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection(); // <-- يفضل تركه معطلاً على Railway إلا إذا قمتِ بإعدادات متقدمة
 
 // Enable authentication and authorization middleware
 app.UseAuthentication();
@@ -92,5 +109,6 @@ app.UseAuthorization();
 
 // Map controllers (API endpoints)
 app.MapControllers();
+
 // Run the application
 app.Run();
